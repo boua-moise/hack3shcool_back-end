@@ -1,0 +1,21 @@
+GET (/cours/list)
+Elle charge tous les cours dans la BD et les envoie au niveau du front-end.
+
+GET (/cours/{cours_id}/details)
+Renvoie tous un cours avec ses détails:
+-Trite du cours
+-Titre des sections 
+-Bref explication et objectifs du cours
+-Auteur du cours
+
+
+POST (/cours/{cours_id}/register)
+Inscrire un étudiant à un cours
+
+
+GET (/cours/{cours_id}/view)
+Elle vérifie d'abord si l'utilisateur est connecté. Donc elle dépend de la connexion.
+Elle renvoie toutes les sections liées à un cours au front-end.
+
+PUT (/cours/{cours_id}/update)
+marque la fin d'un cours

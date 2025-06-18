@@ -1,0 +1,36 @@
+GET (/student)
+elle affiche les cours qui sont suivis par l'utilisateur en fonction de leur statut
+
+DELETE (dashboard/student/cours/{cours_id}/erase)
+permet à l'étudiant de se désinscrire d'un cours
+-on vérifie son rôle
+-on vérifie s'il est inscrire dabord
+-si oui on effectue l'opération
+-on supprime toutes les sections en relation avec le cours
+-on supprime toutes les suivis en relation avec le cours
+-pour terminer on supprime le cours
+
+
+
+GET (dashboard/teacher)
+elle affiche les cours qu'un prof crée
+
+
+POST (dashboard/addcours)
+ajoute un nouveau cours
+AddCoursSchema(BaseModel):
+		auteur:AuteurSchema
+		titre_lecon:str
+		descrisption:str
+		sections:list[SectionSchema]
+	
+PUT (dashboard/{cours_id}/updatecours)
+met ajout un cours
+
+DELETE (dashboard/{cours_id}/deletecours)
+-verifie si à le droit
+-supprime les suivis
+-supprime les sections 
+-supprime le cours
+
+

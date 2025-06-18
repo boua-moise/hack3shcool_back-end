@@ -1,0 +1,31 @@
+-POST (auth/register)
+
+Se chemin se base sur:
+RegisterSchema:
+nom
+prénom
+role
+biographie
+mail
+password
+conf_password
+
+
+- On vérifie si l'utilisateur n'existe pas déjà en se basant sur le mail
+
+- Vérifie si les password sont identiques
+
+- Ajout de l'utilisateur dans la base de données.
+
+-POST (auth/login)
+
+Se chemin se base sur:
+LoginSchema:
+mail:str
+password:str
+
+- On verifie si l'utilisateur existe
+
+- On verifie le hash du mot de pass
+
+- On créer un token pour l'utilisateur
