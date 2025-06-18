@@ -107,7 +107,7 @@ class DashboardService:
 
         cours_delete = await Cours.prisma().delete(where={"id":cours_id})
 
-        return uivis_delete, sections_delete, cours_delete
+        return suivis_delete, sections_delete, cours_delete
 
     # @staticmethod
     # async def update_profile(data:RegisterSchema):
