@@ -10,7 +10,7 @@ class RegisterSchema(BaseModel):
     nom:str
     prenom:str
     role:Role
-    biographie:str
+    biographie:str = None
     mail:str
     image:bytes = None
     password:str

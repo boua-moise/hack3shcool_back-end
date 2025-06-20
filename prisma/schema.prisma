@@ -17,7 +17,7 @@ model Student{
   id Int @id @default(autoincrement())
   nom String
   prenom String
-  biographie String
+  biographie String?
   url_image String?
   mail String @unique
   password String
@@ -31,7 +31,7 @@ model Teacher{
   id Int @id @default(autoincrement())
   nom String
   prenom String
-  biographie String
+  biographie String?
   url_image String?
   mail String @unique
   password String

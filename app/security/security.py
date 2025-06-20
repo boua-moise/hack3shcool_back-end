@@ -59,7 +59,7 @@ async def get_current_user(token:Annotated[str, Depends(get_token)]):
     user = json.loads(decoded.get("sub"))
 
     if not user:
-        raise HTTPException(detail="Accès non autorisé", status_code=status.HTTP_401_UNAUTHORIZED)
+        raise HTTPException(detail="Accès non autorisé", status_code=status.HTTP_404_NOT_FOUND)
 
 
     if user.get("role") == Role.teacher:
@@ -78,12 +78,12 @@ def permission_access(token:Annotated[str, Depends(get_token)]):
     try:
         decoded = verify_token(token)
     except:
-        raise HTTPException(detail="Accès non autorisé", status_code=409)
+        raise HTTPException(detail="Accès non autorisé", status_code=status.HTTP_401_UNAUTHORIZED)
 
     user = json.loads(decoded.get("sub"))
 
     if not user:
-        raise HTTPException(detail="Accès non autorisé", status_code=status.HTTP_401_UNAUTHORIZED)
+        raise HTTPException(detail="Accès non autorisé", status_code=status.HTTP_404_NOT_FOUND)
 
     return user
 

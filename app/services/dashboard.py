@@ -1,5 +1,5 @@
 from prisma.models import Student, SuiviCours, Teacher, Cours, Section
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from app.shemas.cours import Status
 from app.shemas.authentication import Role
 from app.shemas.dashboard import AddCoursSchema
@@ -35,14 +35,14 @@ class DashboardService:
 
 
         if (not user_info) or (user_info["role"] != Role.student):
-            raise HTTPException(detail="Accès non autorisé", status_code=409)
+            raise HTTPException(detail="Accès non autorisé", status_code=status.HTTP_401_UNAUTHORIZED)
         
         cours_user = await Student.prisma().find_unique(where={"id":user_info["id"]}, include={"coursSuivis":True, "suiviCours":True})
 
         coursid = [el.id for el in cours_user.coursSuivis]
 
         if not (cours_id in coursid):
-            raise HTTPException(detail="Accès non autorisé", status_code=409)
+            raise HTTPException(detail="Accès non autorisé", status_code=stauts.HTTP_401_UNAUTHORIZED)
 
         suivi_id = [el.id for el in cours_user.suiviCours if el.coursId == cours_id][0]
         
@@ -56,7 +56,7 @@ class DashboardService:
     async def teacher(user_info):
 
         if (not user_info) or (user_info["role"] != Role.teacher):
-            raise HTTPException(detail="Accès non autorisé", status_code=409)
+            raise HTTPException(detail="Accès non autorisé", status_code=status.HTTP_401_UNAUTHORIZED)
 
         cours = await Teacher.prisma().find_unique(where={"id":user_info["id"]}, include={"coursCrees":True})
 
@@ -66,7 +66,7 @@ class DashboardService:
     async def addcours(cours:AddCoursSchema, user_info):
 
         if not (user_info or user_info["role"] != Role.teacher):
-            raise HTTPException(detail="Accès non autorisé", status_code=409)
+            raise HTTPException(detail="Accès non autorisé", status_code=status.HTTP_401_UNAUTHORIZED)
 
         new_cours = await Cours.prisma().create(data={
             "auteurId":user_info["id"],
@@ -92,14 +92,14 @@ class DashboardService:
     async def delete_cours(cours_id:int, user_info:dict):
 
         if (not user_info) or (user_info["role"] != Role.teacher):
-            raise HTTPException(detail="Accès non autorisé", status_code=409)
+            raise HTTPException(detail="Accès non autorisé", status_code=status.HTTP_401_UNAUTHORIZED)
         
         all_cours = await Teacher.prisma().find_first(where={"id":user_info["id"]}, include={"coursCrees":True})
 
         all_idcours = [el.id for el in all_cours.coursCrees if el.id == cours_id]
 
         if not all_idcours:
-            raise HTTPException(detail="Accès non autorisé", status_code=409)
+            raise HTTPException(detail="Accès non autorisé", status_code=status.HTTP_401_UNAUTHORIZED)
 
         suivis_delete = await SuiviCours.prisma().delete_many(where={"coursId":cours_id})
         

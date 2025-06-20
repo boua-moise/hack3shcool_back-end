@@ -17,6 +17,16 @@ async def lifespan(app:FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # ou ["*"] temporairement
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(auth_router)
 app.include_router(cours_router)
 app.include_router(dashboard_router)
