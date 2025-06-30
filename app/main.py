@@ -21,7 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # ou ["*"] temporairement
+    allow_origins=["https://boua-moise.github.io"],  # ou ["*"] temporairement
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

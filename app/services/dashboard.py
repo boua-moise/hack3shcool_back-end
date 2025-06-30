@@ -3,13 +3,16 @@ from fastapi import HTTPException, status
 from app.shemas.cours import Status
 from app.shemas.authentication import Role
 from app.shemas.dashboard import AddCoursSchema
-from app.security.security import register_image
+from app.security.security import save_local_image
 
 
 class DashboardService:
     
     @staticmethod
     async def dashboard_student(user_info):
+        if (not user_info) or (user_info["role"] != Role.student):
+            raise HTTPException(detail="Accès non autorisé", status_code=status.HTTP_401_UNAUTHORIZED)
+            
         all_cours = await Student.prisma().find_unique(where={"id":user_info["id"]}, include={"coursSuivis":{"include":{"auteur":True}}, "suiviCours": True})
 
         coursid_terminer = [el.coursId for el in all_cours.suiviCours if el.statut == Status.terminer]
@@ -67,10 +70,13 @@ class DashboardService:
 
         if not (user_info or user_info["role"] != Role.teacher):
             raise HTTPException(detail="Accès non autorisé", status_code=status.HTTP_401_UNAUTHORIZED)
-
+        print("cours: ",cours)
         new_cours = await Cours.prisma().create(data={
             "auteurId":user_info["id"],
             "titre":cours.titre,
+            "niveau":cours.niveau,
+            "url_image":cours.url_image,
+            "duree": cours.duree,
             "description":cours.description
             })
         
@@ -81,12 +87,11 @@ class DashboardService:
                 "contenu":section.contenu
             })
         
-        if cours.image:
-            await Cours.prisma().update(where={"id":new_cours.id},data={
-            "url_image":register_image(cours.image)
-            })
         
-        return {"response": "Cours crée avec succès"}
+        return {
+                "response": "Cours crée avec succès",
+                "id": new_cours.id
+            }
     
     @staticmethod
     async def delete_cours(cours_id:int, user_info:dict):
@@ -109,6 +114,8 @@ class DashboardService:
 
         return suivis_delete, sections_delete, cours_delete
 
-    # @staticmethod
-    # async def update_profile(data:RegisterSchema):
-    #     pass
+    @staticmethod
+    async def update_cours(image, id:int):
+        response = await save_local_image(image)
+        await Cours.prisma().update(where={"id":id}, data={"image":response["file"]["url"]})
+        return {"response":"success"}

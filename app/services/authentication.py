@@ -1,14 +1,14 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, UploadFile
 from prisma.models import Student, Teacher
 
-from app.security.security import hashed_password, verify_password, create_token, register_image
+from app.security.security import hashed_password, verify_password, create_token, save_local_image
 from app.shemas.authentication import RegisterSchema, LoginSchema, Role
 
 
 class AuthService:
 
     @staticmethod
-    async def register(user_info:RegisterSchema):
+    async def register(user_info:RegisterSchema, image:UploadFile):
 
         """
         Cette fonction permet d'enrégistrer un nouvel utilisateur
@@ -41,6 +41,14 @@ class AuthService:
                 }
             )
 
+            if image:
+                response = await save_local_image(image)
+                print("url: ",response["file"]["url"])
+                await Teacher.prisma().update(where={"id":user.id},
+                data={
+                    "url_image":response["file"]["url"]
+                    })
+
         else:
             # On vérifie si l'utilisateur n'existe pas déjà en se basant sur le mail
             user_existe = await Student.prisma().find_unique(where={"mail": user_info.mail})
@@ -65,10 +73,12 @@ class AuthService:
                 }
             )
 
-            if user_info.image:
-                await Cours.prisma().update(where={"id":user.id},
+            if image:
+                response = await save_local_image(image)
+                print("url: ",response["file"]["url"])
+                await Student.prisma().update(where={"id":user.id},
                 data={
-                    "url_image":register_image(user_info.image)
+                    "url_image":response["file"]["url"]
                     })
 
         return  {"response": "Utilisateur enrégistré avec succès"}
@@ -109,3 +119,12 @@ class AuthService:
     @staticmethod
     async def current_user(user:Student|Teacher):
         return user
+    
+    @staticmethod
+    async def all_student(type_user:Role):
+        if type_user.value == Role.student:
+            student = await Student.prisma().find_many()
+            return {"users": student}
+        else:
+            student = await Teacher.prisma().find_many()
+            return {"users": student}

@@ -37,6 +37,9 @@ class CoursService:
 
         cours = await Cours.prisma().find_unique(where={"id":cours_id}, include={"sections":True, "auteur":True})
 
+        if not cours:
+            raise HTTPException(detail="Ce cours n'existe pas", status_code=status.HTTP_404_NOT_FOUND)
+
         return {"detail_cours": cours}
 
 

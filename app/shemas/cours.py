@@ -1,12 +1,18 @@
 from pydantic import BaseModel
 from enum import Enum
 
+class Level(str, Enum):
+    facile = "facile"
+    moyenne = "moyenne"
+    difficile = "difficile"
+
 class Status(str,Enum):
     encours = "encours"
     terminer = "terminer"
 
 class SectionSchema(BaseModel):
     titre:str
+    url_image:str|None
     contenu:str
 
 class SectionSchemaOfDetail(BaseModel):
@@ -14,16 +20,20 @@ class SectionSchemaOfDetail(BaseModel):
 
 class AuteurSchema(BaseModel):
     nom:str
-    prenom:str
     biographie:str
+    prenom:str
+    url_image:str|None
     mail:str
 
 class AllCoursSchema(BaseModel):
+    id:int
     auteur:AuteurSchema
     titre:str
     description:str
-
-    
+    image:str|None
+    url_image:str|None
+    niveau:Level
+    duree:str
 
 
 class ResponseAllCoursSchema(BaseModel):
@@ -33,6 +43,9 @@ class ResponseAllCoursSchema(BaseModel):
 class DetailCoursSchema(BaseModel):
     auteur:AuteurSchema
     titre:str
+    url_image:str|None
+    niveau:Level
+    duree:str
     description:str
     sections:list[SectionSchemaOfDetail]
 
