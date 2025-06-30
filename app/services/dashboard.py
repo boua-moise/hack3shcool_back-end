@@ -84,6 +84,7 @@ class DashboardService:
             await Section.prisma().create(data={
                 "coursId": new_cours.id,
                 "titre":section.titre,
+                "url_image":section.url_image,
                 "contenu":section.contenu
             })
         
